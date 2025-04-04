@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>Drop .mbox File to Convert</h2>
+    <div id="drop-zone" style="width:300px;height:200px;border:2px dashed #aaa;text-align:center;line-height:200px;">
+      Drop .mbox here
+    </div>
+    <script>
+      const { invoke } = window.__TAURI__.tauri;
+      const dropZone = document.getElementById("drop-zone");
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = "green";
+      });
+      dropZone.addEventListener("drop", async (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        const path = file.path;
+        await invoke("convert_mbox", { filePath: path });
+        alert("CSV created next to the .mbox file!");
+      });
+    </script>
+  </body>
+</html>

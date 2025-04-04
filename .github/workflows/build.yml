@@ -1,0 +1,35 @@
+
+name: Build macOS .app
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          echo "source $HOME/.cargo/env" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          source $HOME/.cargo/env
+          npm install
+
+      - name: Build Tauri app
+        run: |
+          source $HOME/.cargo/env
+          npm run tauri build
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: macos-app
+          path: src-tauri/target/release/bundle/macos/
